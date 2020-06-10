@@ -16,13 +16,16 @@ start_state = [0, 0]
 win_state = [3, 2]
 lose_state = [3, 0]
 blockade = [1, 1]
-deterministic = True
+deterministic = True  ## True means that the agent will go where it intends to go
 
 
 
 # Define initial characteristics of agent
 
 def __init__(self):
+    
+    ## record states for each run
+    self.states = []
     
     # how quickly the agent learns
     self.learning_rate = 0.1
@@ -39,6 +42,11 @@ def __init__(self):
     for row in range(board_rows):
         for col in range(board_columns):
             self.state_values[row, col] = 0
+            
+def reset(self):
+    ## bring agent back to the start of the board
+    self.state = start_state
+    self.states = []
 
 ## Define reward states
 
@@ -84,17 +92,17 @@ def play(self, iterations = 10):
     while i < iterations:
     
         # check if agent has reached the end state (NEED TO DO)
-        if self.State.isEnd:
+        if self.state == win_state or self.state == lose_state:
             
             # begin back propagation process
             reward = self.get_reward()
-            
+            next_state_value = reward
     
             # define value iteration formula
             for s in reversed(self.states):
                 # define separate state values (estimated rewards)
-                self.state_values[s] = self.state_values[s] + self.learning_rate*(reward - self.state_values[s])
-            
+                self.state_values[s] = self.state_values[s] + self.learning_rate*(next_state_value - self.state_values[s]) ## new state1 = old state1 + learning_rate*(new state2 - old state 1)
+                next_state_value = self.state_values[s] ## assign new state1 to next_state_value for the next iteration
             # reset agent states (but not state values!)
             self.reset()
             
@@ -103,17 +111,19 @@ def play(self, iterations = 10):
         
         # agent is stil playing game so needs to decide next action
         else:
-            # decide on action based on estimated reward
+            # decide on action
+            ## based on reward if agent chooses optimal reward path
+            ## based on random choice if agent choose to explore
             action = self.choose_action()
-            self.state = self.next_state_position(action)
-            
+            self.state = self.next_state_position(action) ## return new state position
+            self.states.append(self.state)
 
 
 def choose_action(self):
     
     action = ""
     
-    if np.random.uniform(0, 1) <= self.exploration_rate:
+    if np.random.uniform(0, 1) <= self.exploration_rate: ## can change this exploration decision later on
         # agent is going to explore
         action = np.random.choice(self.actions)
     else:
@@ -122,14 +132,14 @@ def choose_action(self):
         for action_option in self.actions: # cycle through action options
             next_reward = self.state_values[self.next_state_position[action_option]] # check rewards of each state action
             
-            if next_reward > current_reward:
+            if next_reward > current_reward: ## select action that presents the best reward
                 action = action_option
                 current_reward = next_reward
             
     return action
             
-            
-            
+__init__()
+play()
             
             
             
