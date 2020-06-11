@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 """
-Created on Tue May 19 10:25:37 2020
+Created on Thu Jun 11 12:16:57 2020
 
 @author: Paolo
 """
+
+
 
 ## Import required modules
 import numpy as np
@@ -16,7 +18,7 @@ start_state = [0, 0]
 win_state = [3, 2]
 lose_state = [3, 0]
 blockade = [1, 1]
-deterministic = True  ## True means that the agent will go where it intends to go
+deterministic = False  ## False means the agent may not go where it intends to go
 
 class RL_Agent:
 
@@ -43,6 +45,11 @@ class RL_Agent:
         for row in range(board_rows):
             for col in range(board_columns):
                 self.state_values[row, col] = 0
+                
+        if deterministic == True:
+            self.determine = True
+        else:
+            self.determine = False
                 
     def reset(self):
         ## bring agent back to the start of the board
@@ -83,7 +90,20 @@ class RL_Agent:
                     if next_state != blockade:
                         return next_state # return next state position
             
+            self.determine = False ## to ensure next move is non deterministic again
+            
             return self.state # output state position if move is illegal
+        
+        else:
+            self.action_probability()
+            self.determine = True ## only necessary to confirm and record next action, agent is not deterministic
+            
+            
+    def action_probability(self):
+        ## if action
+        ## process probability of action (in our case 0.8)
+        ## return action intention
+        ## use next state position determine to confirm next state
         
     def play(self, iterations = 10):
         
